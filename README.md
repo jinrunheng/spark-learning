@@ -59,6 +59,28 @@ Hadoop 的 MR 框架与 Spark 框架都是数据处理框架，那么我们在�
 
 经过上面的比较，我们可以看出在绝大多书的数据计算场景中，Spark 确实会比 MapReduce 更有优势。但是 Spark 是基于内存的，所以在实际的生产环境中，由于内存的限制，可能会由于内存资源不够导致 Job 执行失败。此时，MapReduce 其实是一个更好的选择，所以，Spark 并不能完全替代 Hadoop MR。
 
+### 1.4 Spark 核心模块
+
+- Spark Core
+
+  Spark Core 中提供了 Spark 最基础与最核心的功能，Spark 其他的功能如：Spark SQL，Spark Streaming，GraphX，MLlib 都是在 Spark Core 的基础上进行扩展的。
+
+- Spark SQL
+
+  Spark SQL 是 Spark 用来操作结构化数据的组件。通过 Spark SQL，用户可以使用 SQL 或者 Apache Hive 版本的 SQL 方言（HQL）来查询数据。
+
+- Spark Streaming
+
+  Spark Streaming 是 Spark 平台上针对实时数据进行流式计算的组件，提供了丰富的处理数据流的 API。
+
+- Spark MLlib
+
+  MLlib 是 Spark 提供的一个机器学习算法库。MLlib 不仅提供了模型评估，数据导入等额外功能，还提供了一些更底层的机器学习原语。
+
+- Spark GraphX
+
+  GraphX 是 Spark 面向图计算提供的框架与算法库。
+
 
 
 
