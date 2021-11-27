@@ -170,5 +170,83 @@ public class WordCount {
 
 Spark 作为一个数据处理框架和计算引擎，被设计在所有常见的集群环境中运行，在国内工作中主流的环境为 Yarn，不过容器式环境也渐渐流行起来了。接下来，我们就分别看看不同环境下 Spark 的运行。
 
+## 3.1 Local 模式
+
+所谓的 Local 模式，就是不需要其他任何节点的资源便可以在本地执行 Spark 代码的环境。
+
+我们可以开启一个 Linux 虚拟机，也可以使用 Docker 容器来搭建环境，我使用的是后者的方式。
+
+首先，基于 CentOS 8.4 的镜像创建一个 Linux 服务器环境，命令如下：
+
+```bash
+docker run -it --name hadoop-basenv -v /Users/macbook/Desktop/data/docker/data:/home/data centos:6.6 /bin/bash
+```
+
+接下来，我们需要在创建好的容器中安装 Spark 相关基础环境。
+
+**安装 Vim**
+
+执行命令：
+
+```bash
+yum install vim-enhanced
+```
+
+**安装 JDK**
+
+首先将 JDK 官网的 rpm 安装包 `jdk-8u202-linux-x64.rpm` 放到本地目录 `/Users/macbook/Desktop/data/docker/data` 下，因为创建容器时，我们将此目录挂载到容器中的 `/home/data` 下，所以我们可以在 `/home/data` 目录下找到 JDK 安装包，通过这种挂载的方式我们可以在宿主机和容器之间共享数据。执行命令，安装 JDK：
+
+```bash
+rpm -ivh jdk-8u202-linux-x64.rpm
+```
+
+**安装 Spark**
+
+在官网下载 Spark 安装包，解压后放到本地共享目录下，我使用的是 `spark-3.2.0-bin-hadoop.3.2`。将文件夹名修改为 `spark-local`。
+
+**配置环境变量**
+
+```bash
+SPARK_HOME=/home/data/spark-local/
+JAVA_HOME=/usr/java/jdk1.8.0_202-amd64/
+JRE_HOME=/usr/java/jdk1.8.0_202-amd64/jre
+
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+PATH=$PATH:$JAVA_HOME/bin:$SPARK_HOME/bin:$SPARK_HOME/sbin
+
+export JAVA_HOME JRE_HOME CLASSPATH SPARK_HOME PATH
+```
+
+上述操作全部执行完毕后，进入到 `spark-local` 目录下执行命令：
+
+```bash
+bin/spark-shell
+```
+
+![image-20211127153121295](https://tva1.sinaimg.cn/large/008i3skNgy1gwtqsdidp7j31nf0u0n7y.jpg)
+
+当出现 Spark 的 Logo，并且开启了 Scala 命令行时，说明我们的本地 Local 环境配置成功。
+
+在 Local 环境下，如何提交我们的应用呢？
+
+一般我们会将开发的 Java 程序打成 Jar 包，然后使用 `spark-submit` 命令来进行提交：
+
+```bash
+bin/spark-submit \
+--class org.apache.spark.examples.SparkPi \
+--master local[2] \
+./examples/jars/spark-examples_2.12-3.2.0.jar \
+10
+```
+
+上面的命令中，`SparkPi` 是官方提供给我们的一个示例程序，用来计算圆周率。 
+
+- `--class` 表示要执行程序的主类，此处可以更换为我们自己写的应用程序
+- `--master local[2]` 部署模式，默认为本地模式，数字表示分配虚拟 CPU 核数量
+- `spark-examples_2.21-3.2.0.jar` 为运行的应用类所在的 jar 包，实际使用时，可以设定为我们自己打的 jar 包
+- 数字 10 表示程序的入口参数，用于设定当前应用的任务数量
+
+
+
 
 
