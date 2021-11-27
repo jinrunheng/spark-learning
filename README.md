@@ -248,5 +248,14 @@ bin/spark-submit \
 
 
 
+Local 模式一般用于个人测试使用，真实的工作中需要将应用提交到对应的 Spark 集群中去执行。
 
+## 4. Spark 运行架构
 
+### 4.1 运行架构
+
+Spark 框架的核心是一个计算引擎，整体来说，它采用了标准的 Master-Slave 结构。
+
+如下图所示，它展示了一个 Spark 执行时的基本结构。图形中的 Driver 表示 Master，负责管理整个集群中的作业任务调度。图形中的 Executor 则是 Slave，负责实际执行任务。
+
+![image-20211127164101156](https://tva1.sinaimg.cn/large/008i3skNgy1gwtsssevy8j318w0qmjt8.jpg)
