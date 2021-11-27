@@ -1,6 +1,0 @@
-success
-error
-success
-error
-success
-success

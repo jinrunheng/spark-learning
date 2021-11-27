@@ -16,6 +16,8 @@ import java.util.Iterator;
 public class WordCount {
 
     public static void main(String[] args) {
+        String hadoopPath = "/Users/macbook/Desktop/data/docker/data/hadoop-2.7.3";
+        System.setProperty("hadoop.home.dir", hadoopPath);
 
         // 建立与 Spark 的连接
         SparkConf conf = new SparkConf()
