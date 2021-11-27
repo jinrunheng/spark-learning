@@ -83,7 +83,92 @@ Hadoop 的 MR 框架与 Spark 框架都是数据处理框架，那么我们在�
 
 ## 2. Spark 快速上手
 
+### 2.1 Word Count
 
+![image-20211127112807879](https://tva1.sinaimg.cn/large/008i3skNgy1gwtjr7genmj32040pu42d.jpg)
+
+Java 代码：
+
+```java
+package com.github.sparkdemo.lesson2;
+
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.api.java.function.VoidFunction;
+import scala.Tuple2;
+
+import java.util.Arrays;
+import java.util.Iterator;
+
+public class WordCount {
+
+    public static void main(String[] args) {
+
+        // 建立与 Spark 的连接
+        SparkConf conf = new SparkConf()
+                .setAppName("WordCount")
+                .setMaster("local");
+
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        // 1. 读取文件，获取一行一行的数据
+        String filePath = "/Users/macbook/Desktop/myProject/spark-learing/spark-demo/src/main/resources/hello.txt";
+        JavaRDD<String> lines = sc.textFile(filePath);
+
+        // 2. 将一行数据进行拆分，形成一个一个的单词（分词）
+        // hello word / hello spark => hello,word,hello,spark
+        JavaRDD<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
+
+            @Override
+            public Iterator<String> call(String s) throws Exception {
+                return Arrays.asList(s.split(" ")).iterator();
+            }
+        });
+
+        // 3. 将数据根据单词进行分组，便于统计（转换为 <word,1> 的格式）
+        // (hello,hello),(world),(spark)
+        JavaPairRDD<String, Integer> pairs = words.mapToPair(new PairFunction<String, String, Integer>() {
+            @Override
+            public Tuple2<String, Integer> call(String s) throws Exception {
+                return new Tuple2<String, Integer>(s, 1);
+            }
+        });
+
+        // 4. 对分组后的数据进行聚合，统计相同 word 出现的频率
+        // (hello,2),(world,1),(spark,1)
+        JavaPairRDD<String, Integer> wordCount = pairs.reduceByKey(new Function2<Integer, Integer, Integer>() {
+            @Override
+            public Integer call(Integer v1, Integer v2) throws Exception {
+                return v1 + v2;
+            }
+        });
+
+        // 5. 执行 action 将结果打印出来
+        wordCount.foreach(new VoidFunction<Tuple2<String, Integer>>() {
+            @Override
+            public void call(Tuple2<String, Integer> t) throws Exception {
+                System.out.println(t._1() + " " + t._2());
+            }
+        });
+
+        // 6. 将结果输出到一个目录中
+        String outputFilePath = "/Users/macbook/Desktop/myProject/spark-learing/spark-demo/src/main/resources/output";
+        wordCount.saveAsTextFile(outputFilePath);
+
+        // 关闭 SparkContext
+        sc.stop();
+    }
+}
+```
+
+## 3. Spark 运行环境
+
+Spark 作为一个数据处理框架和计算引擎，被设计在所有常见的集群环境中运行，在国内工作中主流的环境为 Yarn，不过容器式环境也渐渐流行起来了。接下来，我们就分别看看不同环境下 Spark 的运行。
 
 
 
