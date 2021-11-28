@@ -1,0 +1,5 @@
+panda 0
+pink 3
+pirate 3
+panda 1
+pink 4
