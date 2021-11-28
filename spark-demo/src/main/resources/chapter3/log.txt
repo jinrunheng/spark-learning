@@ -1,0 +1,6 @@
+error : blablabla
+error : blablabla
+warning : blablabla
+compile : blablabla
+warning : blablabla
+compile : blablabla

@@ -1,4 +1,4 @@
-package com.github.sparkdemo.lesson2;
+package com.github.sparkdemo.chapter2;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
